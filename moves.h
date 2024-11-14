@@ -5,7 +5,13 @@
 #ifndef UNTITLED1_MOVES_H
 #define UNTITLED1_MOVES_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "loc.h"
+
+#define NB_MOVES 7
+#define NB_TIRAGES 4
 
 /**
  * @brief Array of strings for the possible moves of the robot
@@ -40,6 +46,11 @@ char *getMoveAsString(t_move move);
  * @param move : the move to do
  * @return the new localisation of the robot
  */
+
+t_orientation rotate(t_orientation ori, t_move move);
+
+t_localisation translate(t_localisation loc, t_move move);
+
 t_localisation move(t_localisation, t_move);
 
 /**
@@ -49,5 +60,11 @@ t_localisation move(t_localisation, t_move);
  * @return none
  */
 void updateLocalisation(t_localisation *, t_move);
+
+t_move chooseMove(float* probabilities);
+
+void drawMoves(t_move* drawnMoves);
+
+t_move* excludeMove(t_move* initialMovesPull, int nbMoves, t_move moveToExclude);
 
 #endif //UNTITLED1_MOVES_H

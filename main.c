@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include "map.h"
+#include "loc.h"
+#include "moves.h"
+#include "moves.h"
+#include "tree.h"
 
 int main() {
     t_map map;
@@ -32,5 +36,23 @@ int main() {
         printf("\n");
     }
     displayMap(map);
+
+    #define nbMovesReg 3
+    #define nbMovesTradi 4
+    #define startingCaseCost 9
+
+    //Tirage mouvements
+
+    srand(time(NULL));
+    t_move movesPull[NB_TIRAGES];
+    drawMoves(movesPull);
+
+    t_localisation MarcLoc = loc_init(5, 7, NORTH);
+
+    NODE* root = buildTree(0, 3, 4, startingCaseCost, movesPull, MarcLoc);
+    printTree(root, 0);
+
+
+
     return 0;
 }
