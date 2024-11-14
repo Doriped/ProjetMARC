@@ -4,6 +4,7 @@
 #include "loc.h"
 #include "moves.h"
 #include "loc.h"
+#include "map.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -25,7 +26,7 @@ TREE* createTree();
 
 void addChild(NODE* parent, NODE* child, int posChild);
 
-NODE* buildTree(int level, int maxLevel, int nbChildren, int val, t_move* moves, t_localisation loc);
+NODE* buildTree(int level, int maxLevel, int nbChildren, int val, t_move* moves, t_localisation loc, t_map map);
 
 void printTree(NODE* node, int depth);
 
