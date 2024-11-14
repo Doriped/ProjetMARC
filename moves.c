@@ -4,6 +4,8 @@
 
 #include "moves.h"
 
+float probabilities[NB_MOVES] = {22, 15, 7, 7, 21, 21, 7};
+
 /* prototypes of local functions */
 /* local functions are used only in this file, as helper functions */
 
@@ -40,6 +42,7 @@ t_orientation rotate(t_orientation ori, t_move move)
             rst=2;
             break;
         default:
+            rst = 0;
             break;
     }
     return (ori+rst)%4;
@@ -143,8 +146,8 @@ char *getMoveAsString(t_move move)
 t_localisation move(t_localisation loc, t_move move)
 {
     t_localisation new_loc;
-    new_loc.ori = rotate(loc.ori, move);
     new_loc = translate(loc, move);
+    new_loc.ori = rotate(loc.ori, move);
     return new_loc;
 }
 
@@ -152,4 +155,44 @@ void updateLocalisation(t_localisation *p_loc, t_move m)
 {
     *p_loc = move(*p_loc, m);
     return;
+}
+
+t_move chooseMove(float* probabilities) {
+    float randValue = (float)(rand() % 100);
+    float cumulativeProbability = 0.0;
+
+    for (int i = 0; i < NB_MOVES; i++) {
+        cumulativeProbability += probabilities[i];
+        if (randValue < cumulativeProbability) {
+            return (t_move)i;
+        }
+    }
+    return (t_move)(NB_MOVES - 1);
+}
+
+void drawMoves(t_move* drawnMoves) {
+    printf("Tirage des mouvements :\n");
+
+    for (int i = 0; i < NB_TIRAGES; i++) {
+        t_move chosenMove = chooseMove(probabilities);
+        drawnMoves[i] = chosenMove; // Enregistrer le mouvement tiré
+        printf("Mouvement %d : %s\n", i + 1, getMoveAsString(chosenMove));
+    }
+}
+
+t_move* excludeMove(t_move* initialMovesPull, int nbMoves, t_move moveToExclude) {
+    t_move* updatedMovesPull = (t_move*)malloc((nbMoves - 1) * sizeof(t_move));
+
+    int j = 0;
+    int cpt = 0;
+    for (int i = 0; i < nbMoves; i++) {
+        if (initialMovesPull[i] == moveToExclude && cpt == 0) {
+            cpt++;
+        }
+        else {
+            updatedMovesPull[j] = initialMovesPull[i];
+            j++;
+        }
+    }
+    return updatedMovesPull;
 }
