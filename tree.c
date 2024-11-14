@@ -28,7 +28,7 @@ void addChild(NODE* parent, NODE* child, int posChild) {
     }
 }
 
-NODE* buildTree(int level, int maxLevel, int nbChildren, int val, t_move* moves, t_localisation loc) {
+NODE* buildTree(int level, int maxLevel, int nbChildren, int val, t_move* moves, t_localisation loc, t_map map) {
     if (level > maxLevel) {
         return NULL;
     }
@@ -38,9 +38,16 @@ NODE* buildTree(int level, int maxLevel, int nbChildren, int val, t_move* moves,
     for (int i = 0; i < nbChildren; i++) {
         t_localisation newLoc = move(loc, moves[i]);
         t_move* childAvailablesMoves = excludeMove(moves, nbChildren, moves[i]);
-        node->children[i] = buildTree(level + 1, maxLevel, nbChildren - 1, 0, childAvailablesMoves, newLoc);
-    }
 
+        int newCost;
+        if (isValidLocalisation(newLoc.pos, map.x_max, map.y_max)){
+            newCost = map.costs[newLoc.pos.y][newLoc.pos.x];
+        }
+        else {
+            newCost = 10000;
+        }
+        node->children[i] = buildTree(level + 1, maxLevel, nbChildren - 1, newCost, childAvailablesMoves, newLoc, map);
+    }
     return node;
 }
 
