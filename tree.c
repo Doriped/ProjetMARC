@@ -65,3 +65,93 @@ void printTree(NODE* node, int depth) {
         printTree(node->children[i], depth + 1);
     }
 }
+
+void findOptimalPathRecursive(
+        NODE* node,
+        int currentCost,
+        t_move* path,
+        int depth,
+        Result* bestResult,
+        t_move currentMove
+) {
+    // Vérification du nœud
+    if (!node) return;
+
+    // Mise à jour du coût courant
+    currentCost += node->cost;
+
+    // Ajouter le mouvement courant au chemin actuel
+    path[depth] = currentMove;
+
+    // Si le nœud est une feuille
+    if (node->nbChildren == 0) {
+        if (currentCost < 1000 && currentCost < bestResult->cost) {
+            // Mise à jour des résultats
+            bestResult->cost = currentCost;
+            bestResult->movesCount = depth + 1;
+
+            // Réallocation du tableau de mouvements dans le meilleur résultat
+            free(bestResult->moves);
+            bestResult->moves = malloc(sizeof(t_move) * (depth + 1));
+            if (!bestResult->moves) {
+                perror("Failed to allocate memory for bestResult->moves");
+                exit(EXIT_FAILURE);
+            }
+
+            // Copier le chemin actuel dans le meilleur résultat
+            for (int i = 0; i <= depth; i++) {
+                bestResult->moves[i] = path[i];
+            }
+        }
+        return;
+    }
+
+    // Parcourir les enfants du nœud courant
+    for (int i = 0; i < node->nbChildren; i++) {
+        findOptimalPathRecursive(
+                node->children[i],
+                currentCost,
+                path,
+                depth + 1,
+                bestResult,
+                node->avails[i]
+        );
+    }
+}
+
+Result* createResult() {
+    // Allouer de la mémoire pour un nouvel objet Result
+    Result* newResult = malloc(sizeof(Result));
+
+    // Initialiser les champs de la structure
+    newResult->cost = 1000;       // Coût maximum par défaut
+    newResult->moves = NULL;         // Pas de mouvements au départ
+    newResult->movesCount = 0;       // Nombre de mouvements initialisé à 0
+
+    return newResult;
+}
+
+Result* getOptimalPath(NODE* root) {
+    if (!root) return NULL;
+
+    Result* bestResult = createResult();
+    t_move* path = malloc(sizeof(t_move) * 100);
+
+    findOptimalPathRecursive(root, 0, path, 0, bestResult, F_10);  // Exemple de mouvement initial
+    free(path);
+    return bestResult;
+}
+
+void printResult(Result* result) {
+    if (!result || result->movesCount == 0) {
+        printf("No valid path found.\n");
+        return;
+    }
+    printf("Optimal path cost: %d\n", result->cost);
+    printf("Moves: ");
+    for (size_t i = 0; i < result->movesCount; i++) {
+        printf("%d ", result->moves[i]);
+    }
+    printf("\n");
+}
+

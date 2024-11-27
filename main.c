@@ -51,6 +51,12 @@ int main() {
 
     NODE* root = buildTree(0, 3, 4, startingCaseCost, movesPull, MarcLoc, map);
     printTree(root, 0);
+    Result* result = getOptimalPath(root);
+    if (result == NULL) {
+        printf("Failed to get optimal path\n");
+        return 1;
+    }
+    printResult(result);
 
     return 0;
 }
